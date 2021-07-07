@@ -158,4 +158,4 @@ class RabbitMQ {
   }
 }
 
-module.exports = new RabbitMQ();
+module.exports = RabbitMQ;
