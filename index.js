@@ -19,6 +19,7 @@ class RabbitMQ {
           this.connection = connection;
           this.connection.on('error', (connectionError) => {
             debug('[AMQP] error', { error: connectionError });
+            setTimeout(this.connect.bind(this), 1000);
           });
           this.connection.on('close', () => {
             debug('[AMQP] close');
