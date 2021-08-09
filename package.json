@@ -1,6 +1,6 @@
 {
 	"name": "rabbitmq-auto-reconnect",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "RabbitMQ auto reconnect version",
   "main": "index.js",
 	"author": "Michael.K <michael34435@capslock.tw>",

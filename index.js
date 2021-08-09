@@ -7,6 +7,7 @@ class RabbitMQ {
     this.host = host;
     this.connection = null;
     this.channel = {};
+    this.handlers = {};
   }
 
   async connect() {
@@ -25,6 +26,25 @@ class RabbitMQ {
             const retry = () => setTimeout(async () => {
               try {
                 await this.connect.bind(this)();
+
+                await Object
+                  .keys(this.handlers)
+                  .reduce((promise, queueName) => {
+                    const callback = this.handlers[queueName]?.callback;
+                    const prefetchCount = this.handlers[queueName]?.prefetchCount;
+                    const queueOptions = this.handlers[queueName]?.queueOptions;
+                    const consumeOptions = this.handlers[queueName]?.consumeOptions;
+                    const listenToQueue = this
+                      .listenToQueue(
+                        queueName,
+                        callback,
+                        prefetchCount,
+                        queueOptions,
+                        consumeOptions,
+                      );
+
+                    return promise.then(() => listenToQueue);
+                  }, Promise.resolve());
               } catch {
                 retry();
               }
@@ -115,6 +135,12 @@ class RabbitMQ {
     queueOptions = { durable: true },
     consumeOptions = { noAck: false },
   ) {
+    this.handlers[queueName] = {
+      callback,
+      prefetchCount,
+      queueOptions,
+      consumeOptions,
+    };
     const channel = await this.getChannel('listen', queueName);
     channel.assertQueue(queueName, queueOptions);
     channel.prefetch(prefetchCount);
