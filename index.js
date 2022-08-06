@@ -34,14 +34,13 @@ class RabbitMQ {
                     const prefetchCount = this.handlers[queueName]?.prefetchCount;
                     const queueOptions = this.handlers[queueName]?.queueOptions;
                     const consumeOptions = this.handlers[queueName]?.consumeOptions;
-                    const listenToQueue = this
-                      .listenToQueue(
-                        queueName,
-                        callback,
-                        prefetchCount,
-                        queueOptions,
-                        consumeOptions,
-                      );
+                    const listenToQueue = this.listenToQueue(
+                      queueName,
+                      callback,
+                      prefetchCount,
+                      queueOptions,
+                      consumeOptions,
+                    );
 
                     return promise.then(() => listenToQueue);
                   }, Promise.resolve());
@@ -142,9 +141,9 @@ class RabbitMQ {
       consumeOptions,
     };
     const channel = await this.getChannel('listen', queueName);
+
     channel.assertQueue(queueName, queueOptions);
     channel.prefetch(prefetchCount);
-
     channel.consume(queueName, async (msg) => {
       try {
         /** @type {Message} */
