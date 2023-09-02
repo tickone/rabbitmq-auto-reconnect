@@ -110,15 +110,11 @@ class RabbitMQ {
     queueOptions = { durable: true },
     sendOptions = { persistent: true },
   ) {
-    try {
-      const channel = await this.getChannel('send', queueName);
+    const channel = await this.getChannel('send', queueName);
 
-      channel.assertQueue(queueName, queueOptions);
-      channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), sendOptions);
-      debug(`[AMQP/${queueName}] sended`, { message });
-    } catch (error) {
-      debug(`[AMQP/${queueName}] sendToQueue error`, { error });
-    }
+    channel.assertQueue(queueName, queueOptions);
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), sendOptions);
+    debug(`[AMQP/${queueName}] sended`, { message });
   }
 
   /**
