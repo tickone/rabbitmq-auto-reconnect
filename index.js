@@ -151,7 +151,7 @@ class RabbitMQ {
         channel.ack(msg);
       } catch (error) {
         debug(`[AMQP/${queueName}] nack`, { error });
-        channel.nack(msg, false, false);
+        channel.nack(msg, false, true);
       }
     }, consumeOptions);
     debug(`[AMQP/${queueName}] start listen`);
