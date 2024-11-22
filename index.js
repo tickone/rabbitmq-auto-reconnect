@@ -150,8 +150,14 @@ class RabbitMQ {
         debug(`[AMQP/${queueName}] ack (${message.type})`);
         channel.ack(msg);
       } catch (error) {
-        debug(`[AMQP/${queueName}] nack`, { error });
-        channel.nack(msg, false, true);
+        const messageAge = (new Date().getTime() - msg.properties.timestamp) / 60000; // in minutes
+        if (messageAge <= 5) {
+          debug(`[AMQP/${queueName}] nack`, { error });
+          channel.nack(msg, false, true);
+        } else {
+          debug(`[AMQP/${queueName}] message too old, not nacking`, { error });
+          channel.ack(msg);
+        }
       }
     }, consumeOptions);
     debug(`[AMQP/${queueName}] start listen`);
